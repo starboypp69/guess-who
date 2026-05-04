@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess Who Board</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    h1 { margin: 0; font-size: 2rem; }
+    .controls { display: flex; gap: 12px; }
+    button {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .upload-btn { background: #2563eb; color: white; }
+    .reset-btn { background: #475569; color: white; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+    .card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.25s;
+      border: 2px solid #334155;
+      background: #1e293b;
+    }
+    .card:hover { transform: scale(1.03); }
+    .card img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      transition: 0.25s;
+    }
+    .card.dimmed img {
+      filter: grayscale(100%) brightness(35%);
+    }
+    .card .name {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      padding: 6px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .card.dimmed::after {
+      content: '✕';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: #ef4444;
+      font-weight: bold;
+    }
+    @media (max-width: 1000px) {
+      .grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Guess Who Board</h1>
+        <p>Upload up to 24 photos and click to eliminate players.</p>
+      </div>
+      <div class="controls">
+        <button class="upload-btn" onclick="document.getElementById('upload').click()">Upload Photos</button>
+        <button class="reset-btn" onclick="resetBoard()">Reset</button>
+      </div>
+    </div>
+
+    <input type="file" id="upload" accept="image/*" multiple hidden />
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <script>
+    const upload = document.getElementById('upload');
+    const grid = document.getElementById('grid');
+
+    upload.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files).slice(0, 24);
+      grid.innerHTML = '';
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${event.target.result}" alt="${file.name}" />
+            <div class="name">${file.name.replace(/\.[^/.]+$/, '')}</div>
+          `;
+          card.addEventListener('click', () => {
+            card.classList.toggle('dimmed');
+          });
+          grid.appendChild(card);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function resetBoard() {
+      document.querySelectorAll('.card').forEach(card => {
+        card.classList.remove('dimmed');
+      });
+    }
+  </script>
+</body>
+</html>
