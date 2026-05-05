@@ -61,17 +61,7 @@
     }
     .card.dimmed img {
       filter: grayscale(100%) brightness(35%);
-    }
-    .card .name {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      background: rgba(0,0,0,0.6);
-      padding: 6px;
-      font-size: 12px;
-      text-align: center;
-    }
-    .card.dimmed::after {
+    }    .card.dimmed::after {
       content: '✕';
       position: absolute;
       inset: 0;
@@ -122,7 +112,6 @@
           card.className = 'card';
           card.innerHTML = `
             <img src="${event.target.result}" alt="${file.name}" />
-            <div class="name">${file.name.replace(/\.[^/.]+$/, '')}</div>
           `;
           card.addEventListener('click', () => {
             card.classList.toggle('dimmed');
